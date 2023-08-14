@@ -25,8 +25,6 @@ public class Registration {
         System.out.print("Please enter your password: ");
         String password = scanner.nextLine();
 
-
-        //TODO create validation for age
         boolean ageFlag;
         byte age;
         System.out.print("Please enter your age: ");

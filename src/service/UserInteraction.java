@@ -17,10 +17,8 @@ public class UserInteraction {
     public ArrayList<User> getUsers() {
 
         String filePath = UserRepository.getFILEPATH();
-        File file = new File(filePath);
-        String[] ls = file.list();
 
-        int fileCounter = ls == null ? 0 : ls.length;
+        int fileCounter = countOfUsers(filePath);
 
         if(fileCounter > users.size()) {
             User user;
@@ -34,7 +32,31 @@ public class UserInteraction {
         return users;
     }
 
+    public void removeUsers(){
+        String filePath = UserRepository.getFILEPATH();
+        int fileCounter = countOfUsers(filePath);
+        if(users.isEmpty() && fileCounter == 0){
+            System.out.println("There is no users to remove");
+        }else{
+            users.clear();
+
+            if(fileCounter != 0){
+                File file;
+                System.out.println("Count of users deleted: " + fileCounter);
+                for(int i = 0; i < fileCounter; i++){
+                    file = new File(filePath + "Object_" + i + ".ser");
+                }
+            }
+        }
+    }
+
     public void printUsers(){
         users.forEach((user) -> System.out.println(user.toString()));
+    }
+
+    public int countOfUsers(String filePath){
+        File file = new File(filePath);
+        String[] ls = file.list();
+        return ls == null ? 0 : ls.length;
     }
 }

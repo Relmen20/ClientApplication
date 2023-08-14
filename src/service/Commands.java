@@ -18,7 +18,6 @@ public class Commands {
         if(commandList != null) {
             switch (commandList) {
                 case HELP:
-                    //TODO: move to enum
                     commandList.printHelp();
                     break;
                 case ALLUSERS:
@@ -31,7 +30,7 @@ public class Commands {
                     reg.getNewUser(userScanner);
                     break;
                 case REMOVE:
-                    System.out.println("Why do u want do this...");
+                    users.removeUsers();
                     break;
                 default:
                     System.out.println("Wrong command, pls use help");

@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 import java.util.HashMap;
 
@@ -9,6 +9,7 @@ public enum CommandList {
     REMOVE("kill", "Remove user");
     private String shortCommand;
     private String description;
+
     CommandList(String shortCommand, String description) {
         this.shortCommand = shortCommand;
         this.description = description;
@@ -25,8 +26,8 @@ public enum CommandList {
 
     private static HashMap<String, CommandList> stringEnum = new HashMap<String, CommandList>();
 
-    static{
-        for(CommandList command: CommandList.values()){
+    static {
+        for (CommandList command : CommandList.values()) {
             stringEnum.put(command.shortCommand, command);
         }
     }
@@ -36,11 +37,11 @@ public enum CommandList {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return shortCommand + " -- " + description;
     }
 
-    public void printHelp(){
+    public void printHelp() {
         for (CommandList command : CommandList.values()) {
             System.out.println(command.toString());
         }

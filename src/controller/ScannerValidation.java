@@ -1,13 +1,9 @@
-package Controller;
+package controller;
 
 import java.util.Scanner;
 
 public class ScannerValidation {
-    private Scanner scanner;
-
-    public ScannerValidation(Scanner scanner) {
-        this.scanner = scanner;
-    }
+    private Scanner scanner = new Scanner(System.in);
 
     public String nextLine() {
         return this.scanner.nextLine();
@@ -15,5 +11,9 @@ public class ScannerValidation {
 
     public int nextInt(){
         return this.scanner.nextInt();
+    }
+
+    public byte nextByte(){
+        return this.scanner.nextByte();
     }
 }

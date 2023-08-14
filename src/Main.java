@@ -1,5 +1,5 @@
-import Controller.ScannerValidation;
-import Service.Commands;
+import controller.ScannerValidation;
+import service.Commands;
 
 import java.util.*;
 
@@ -7,12 +7,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-
-        ScannerValidation sc = new ScannerValidation(scanner);
-        Commands commands = new Commands(sc);
+        Commands commands = new Commands();
         while(true){
-            commands.ComandHandler();
+            commands.comandHandler();
         }
     }
 }

@@ -1,18 +1,16 @@
-package Service;
+package service;
 
-import Controller.CommandList;
-import Controller.ScannerValidation;
+import controller.CommandList;
+import controller.ScannerValidation;
 
-import static Controller.CommandList.getStringEnum;
+import static controller.CommandList.getStringEnum;
 
 public class Commands {
-    private ScannerValidation userScanner;
-    private UserInteraction users;
-    public Commands(ScannerValidation userScanner){
-        this.userScanner = userScanner;
-    }
+    private ScannerValidation userScanner = new ScannerValidation();
+    private UserInteraction users = new UserInteraction();
 
-    public void ComandHandler(){
+
+    public void comandHandler(){
 
         System.out.println("Enter the message");
         String scan = userScanner.nextLine();
@@ -24,7 +22,8 @@ public class Commands {
                     commandList.printHelp();
                     break;
                 case ALLUSERS:
-                    System.out.println("ALL USERS");
+                    users.getUsers();
+                    users.printUsers();
                     break;
                 case REGISTRATION:
                     System.out.println("Reg new user");

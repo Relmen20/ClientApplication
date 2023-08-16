@@ -4,9 +4,10 @@ import java.util.HashMap;
 
 public enum CommandList {
     HELP("help", "Enter the 'help' to see all commands with them descriptions"),
-    REGISTRATION("reg", "To registration new user"),
-    ALLUSERS("sau", "See all users"),
-    REMOVE("kill", "Remove user");
+    CREATE("create", "To create new user"),
+    READ("read", "Show all users"),
+    UPDATE("update", "Update information about user"),
+    DELETE("delete", "Delete user");
     private String shortCommand;
     private String description;
 

@@ -1,14 +1,13 @@
 package service;
 
 import controller.CommandList;
-import controller.ScannerValidation;
+import controller.UserScanner;
 
 import static controller.CommandList.getStringEnum;
 
 public class Commands {
-    private ScannerValidation userScanner = new ScannerValidation();
-    private UserInteraction users = new UserInteraction();
-
+    private UserScanner userScanner = new UserScanner();
+    private UserInteraction userInteraction = new UserInteraction(userScanner);
 
     public void comandHandler(){
 
@@ -20,17 +19,16 @@ public class Commands {
                 case HELP:
                     commandList.printHelp();
                     break;
-                case ALLUSERS:
-                    users.getUsers();
-                    users.printUsers();
+                case READ:
+//                    userInteraction.getUsers();
+//                    userInteraction.printUsers();
                     break;
-                case REGISTRATION:
+                case CREATE:
                     System.out.println("Reg new user");
-                    Registration reg = new Registration();
-                    reg.getNewUser(userScanner);
+                    userInteraction.createUser();
                     break;
-                case REMOVE:
-                    users.removeUsers();
+                case DELETE:
+//                    userInteraction.removeUsers();
                     break;
                 default:
                     System.out.println("Wrong command, pls use help");

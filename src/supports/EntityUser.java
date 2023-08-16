@@ -1,17 +1,17 @@
-package Supports;
+package supports;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class EntityUser implements Serializable {
 
     private String name;
     private byte age;
     private String password;
     private Gender gender;
 
-    public User(){}
+    public EntityUser(){}
 
-    public User(String name, byte age, String password, Gender gender){
+    public EntityUser(String name, byte age, String password, Gender gender){
         this.name = name;
         this.age = age;
         this.password = password;

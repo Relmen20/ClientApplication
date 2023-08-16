@@ -1,13 +1,13 @@
 package repository;
 
-import Supports.User;
+import supports.EntityUser;
 
 import java.io.*;
 
 public class UserRepository {
     private static final String FILEPATH = "/home/andrew/IdeaProjects/NativeCSR/repo/src/data/";
 
-    public static void objectToFile(User obj) {
+    public void objectToFile(EntityUser obj) {
 
         File file = new File(FILEPATH);
         String[] ls = file.list();
@@ -25,22 +25,22 @@ public class UserRepository {
         }
     }
 
-    public static User getObject(String filepath) {
+    public EntityUser getObject(String filepath) {
         try {
             FileInputStream fileIn = new FileInputStream(filepath);
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
 
-            User user = (User) objectIn.readObject();
+            EntityUser entityUser = (EntityUser) objectIn.readObject();
 
             objectIn.close();
-            return user;
+            return entityUser;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static String getFILEPATH() {
+    public String getFILEPATH() {
         return FILEPATH;
     }
 }

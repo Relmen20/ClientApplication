@@ -2,7 +2,7 @@ package controller;
 
 import java.util.Scanner;
 
-public class ScannerValidation {
+public class UserScanner {
     private Scanner scanner = new Scanner(System.in);
 
     public String nextLine() {

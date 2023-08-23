@@ -1,4 +1,4 @@
-package supports;
+package entity;
 
 public enum Gender {
     MALE("male"),
@@ -6,7 +6,7 @@ public enum Gender {
 
     private String longGender;
 
-    Gender(String longGender){
+    Gender(String longGender) {
         this.longGender = longGender;
     }
 

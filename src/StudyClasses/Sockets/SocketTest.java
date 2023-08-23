@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-class Server extends Thread{
+class Server extends Thread {
     private static final int port = 12345;
     private Socket socket;
     private int num;
@@ -19,7 +19,7 @@ public class SocketTest {
         try {
             InetAddress ia = InetAddress.getByName("localhost");
             ServerSocket srv = new ServerSocket(0);
-        }finally {
+        } finally {
 
         }
 

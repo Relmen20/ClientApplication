@@ -1,20 +1,22 @@
-package supports;
+package entity;
 
 import java.io.Serializable;
 
 public class EntityUser implements Serializable {
 
+    private static final long serialVersionUID = 12345678910L;
     private String name;
     private byte age;
-    private String password;
+    private int ID;
     private Gender gender;
 
-    public EntityUser(){}
+    public EntityUser() {
+    }
 
-    public EntityUser(String name, byte age, String password, Gender gender){
+    public EntityUser(String name, byte age, int ID, Gender gender) {
         this.name = name;
         this.age = age;
-        this.password = password;
+        this.ID = ID;
         this.gender = gender;
     }
 
@@ -26,15 +28,15 @@ public class EntityUser implements Serializable {
         return age;
     }
 
-    public String getPassword() {
-        return password;
+    public int getRole() {
+        return ID;
     }
 
     public Gender getGender() {
         return gender;
     }
 
-    public String toString(){
+    public String toString() {
         return "User data: " + name + " " + age + " " + gender.getLongGender();
     }
 

@@ -32,9 +32,9 @@ public class SocketSender {
 
             SerializedEntity data = new SerializedEntity(sendMsg);
             objectOutputStream.writeObject(data);
-
+//            objectOutputStream.close();
         } catch (Exception e) {
-            System.out.println("Exception : " + e);
+            System.out.println("sender Exception : " + e);
         }
     }
 
@@ -52,8 +52,20 @@ public class SocketSender {
             ser = (SerializedEntity) objectInputStream.readObject();
 
             receivedData = ser.sendMsg;
+
+            objectInputStream.close();
         } catch (Exception e) {
+            System.out.println("catcher Exception : " + e);
         }
         return receivedData;
+    }
+
+
+    public void stopAllProcess() {
+        try{
+            clientSocket.close();
+        } catch (Exception e){
+            System.out.println("Socket error");
+        }
     }
 }

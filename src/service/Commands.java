@@ -22,17 +22,17 @@ public class Commands {
 
     public void comandHandler() {
 
-        SocketSender socketSender = new SocketSender();
-
         HashMap<String, Object> sendData = new HashMap<>();
 
         HashMap<String, Object> receiveData;
 
+        SocketSender socketSender;
 
         System.out.println("Enter the message");
         String scan = scanner.nextLine();
         CommandList commandList = getStringEnum().get(scan);
         if (commandList != null) {
+            socketSender = new SocketSender();
             switch (commandList) {
                 case HELP:
                     commandList.printHelp();
@@ -63,6 +63,7 @@ public class Commands {
 //                    userInteraction.removeUsers();
                     break;
             }
+            socketSender.stopAllProcess();
         } else {
             System.out.println("Wrong command, pls use help");
         }

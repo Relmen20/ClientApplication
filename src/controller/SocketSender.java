@@ -1,6 +1,6 @@
 package controller;
 
-import entity.SerializedEntity;
+import model.SerializedEntity;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -19,7 +19,8 @@ public class SocketSender {
             clientSocket = new Socket(InetAddress.getByName(localhost), serverPort);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Error, connection to server is failed");
+
         }
     }
 
@@ -32,7 +33,6 @@ public class SocketSender {
 
             SerializedEntity data = new SerializedEntity(sendMsg);
             objectOutputStream.writeObject(data);
-//            objectOutputStream.close();
         } catch (Exception e) {
             System.out.println("sender Exception : " + e);
         }

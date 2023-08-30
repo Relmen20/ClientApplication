@@ -1,7 +1,7 @@
 package service;
 
-import entity.EntityUser;
-import entity.Gender;
+import model.EntityUser;
+import model.Gender;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-import service.Commands;
+import service.CommandService;
 
 import java.util.Scanner;
 
@@ -6,9 +6,9 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Commands commands = new Commands(scanner);
+        CommandService commandService = new CommandService(scanner);
         while (true) {
-            commands.comandHandler();
+            commandService.process();
         }
     }
 }

@@ -1,11 +1,12 @@
-package entity;
+package model;
 
 import java.util.HashMap;
 
 public enum CommandList {
     HELP("help", "Enter the 'help' to see all commands with them descriptions"),
     CREATE("create", "To create new user"),
-    READ("read", "Show all users"),
+    READ("read", "Show user by ID"),
+    READ_ALL("read all", "Command for read all users"),
     UPDATE("update", "Update information about user"),
     DELETE("delete", "Delete user");
     private String shortCommand;

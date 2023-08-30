@@ -1,4 +1,4 @@
-package entity;
+package model;
 
 import java.io.Serializable;
 
@@ -28,7 +28,7 @@ public class EntityUser implements Serializable {
         return age;
     }
 
-    public int getRole() {
+    public int getID() {
         return ID;
     }
 
@@ -37,7 +37,7 @@ public class EntityUser implements Serializable {
     }
 
     public String toString() {
-        return "User data: " + name + " " + age + " " + gender.getLongGender();
+        return String.format("User ID -- %s || User Name : %s\n\t\t\t || User age : %s\n\t\t\t || User gender : %s\n", ID, name, age, gender.getLongGender());
     }
 
 }

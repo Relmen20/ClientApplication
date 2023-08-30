@@ -12,11 +12,11 @@ import static model.CommandList.getStringEnum;
 
 public class CommandService {
     private Scanner scanner;
-    private UserInteraction userInteraction;
+    private UserService userService;
 
     public CommandService(Scanner scanner) {
         this.scanner = scanner;
-        this.userInteraction = new UserInteraction(scanner);
+        this.userService = new UserService(scanner);
     }
 
     public void process() {
@@ -28,7 +28,9 @@ public class CommandService {
         SocketSender socketSender;
 
         System.out.println("Enter the message");
+
         String scan = scanner.nextLine();
+
         CommandList commandList = getStringEnum().get(scan);
 
         if (commandList != null) {
@@ -67,7 +69,7 @@ public class CommandService {
 
                 case CREATE:
                     System.out.println("Create new user");
-                    EntityUser user = userInteraction.createUser();
+                    EntityUser user = userService.createUser(0);
 
                     sendData.put(scan, user);
                     socketSender.sender(sendData);
@@ -91,16 +93,63 @@ public class CommandService {
                     receiveData = socketSender.catcher();
 
                     if ((boolean) receiveData.get(scan)) {
-                        System.out.printf("User with ID->%s deleted", deleteID);
+                        System.out.printf("User with ID --> %s deleted\n", deleteID);
                     } else {
-                        System.out.printf("No such user with ID->%s", deleteID);
+                        System.out.printf("No such user with ID->%s\n", deleteID);
                     }
+                    break;
+
+                case DELETE_ALL:
+
+                    System.out.println("============= Delete users =============");
+
+                    sendData.put(scan, "all");
+                    socketSender.sender(sendData);
+
+                    receiveData = socketSender.catcher();
+                    printDeletedUsers(receiveData, scan);
+                    System.out.println("\n========================================");
+
+                    break;
+
+                case UPDATE:
+                    String updateID;
+                    System.out.println("Please enter ID of user u want to update");
+
+                    do {
+                        updateID = scanner.nextLine();
+                    }while(!checkInt(updateID));
+
+                    EntityUser updateUser = userService.createUser(tryToParse(updateID));
+
+                    sendData.put(scan, updateUser);
+                    socketSender.sender(sendData);
+
+                    receiveData = socketSender.catcher();
+
+                    System.out.println(receiveData.get(scan));
                     break;
             }
             socketSender.stopAllProcess();
         } else {
             System.out.println("Wrong command, pls use help");
         }
+    }
+    @SuppressWarnings("unchecked")
+    private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd){
+        ArrayList<Integer> us = (ArrayList<Integer>) receiveData.get(cmd);
+        if (us != null) {
+
+            for (Integer user : us) {
+                System.out.printf("User with ID --> %d deleted\n", user);
+            }
+
+            System.out.printf("Total count of users deleted: %s", us.size());
+
+        } else {
+            System.out.print("\t   Received data has no Users");
+        }
+
     }
 
     @SuppressWarnings("unchecked")

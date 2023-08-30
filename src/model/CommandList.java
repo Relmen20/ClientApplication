@@ -7,8 +7,9 @@ public enum CommandList {
     CREATE("create", "To create new user"),
     READ("read", "Show user by ID"),
     READ_ALL("read all", "Command for read all users"),
-    UPDATE("update", "Update information about user"),
-    DELETE("delete", "Delete user");
+    UPDATE("update", "Update information about user by ID"),
+    DELETE("delete", "Delete user by ID"),
+    DELETE_ALL("delete all", "Delete all users");
     private String shortCommand;
     private String description;
 

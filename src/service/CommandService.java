@@ -4,15 +4,12 @@ import controller.SocketSender;
 import model.CommandList;
 import model.EntityUser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-
-import static model.CommandList.getStringEnum;
+import java.util.*;
 
 public class CommandService {
-    private Scanner scanner;
-    private UserService userService;
+    private boolean EXIT_FLAG = true;
+    private final Scanner scanner;
+    private final UserService userService;
 
     public CommandService(Scanner scanner) {
         this.scanner = scanner;
@@ -21,19 +18,18 @@ public class CommandService {
 
     public void process() {
 
-        HashMap<String, Object> sendData = new HashMap<>();
+        HashMap<String, Object> sendMapRequest = new HashMap<>();
 
-        HashMap<String, Object> receiveData;
+        HashMap<String, Object> receivedMap;
 
         SocketSender socketSender;
 
         System.out.println("Enter the message");
 
-        String scan = scanner.nextLine();
+        String scan = scanner.nextLine().toUpperCase(Locale.ROOT);
 
-        CommandList commandList = getStringEnum().get(scan);
-
-        if (commandList != null) {
+        try {
+            CommandList commandList = CommandList.valueOf(scan);
             socketSender = new SocketSender();
             switch (commandList) {
 
@@ -44,55 +40,49 @@ public class CommandService {
                 case READ:
                     System.out.println("Please enter an ID of user");
 
-                    String readParam;
-                    do {
-                        readParam = scanner.nextLine();
-                    } while (!checkInt(readParam));
+                    int readParam = tryToParse(scanner);
 
-                    sendData.put(scan, tryToParse(readParam));
-                    socketSender.sender(sendData);
+                    sendMapRequest.put(scan, readParam);
+                    socketSender.sendRequest(sendMapRequest);
 
-                    receiveData = socketSender.catcher();
-                    System.out.println(receiveData.get(scan).toString());
+                    receivedMap = socketSender.catchRespond();
+                    System.out.println(receivedMap.get(scan).toString());
                     break;
 
                 case READ_ALL:
                     System.out.println("============== All users ==============");
 
-                    sendData.put(scan, "all");
-                    socketSender.sender(sendData);
+                    sendMapRequest.put(scan, "all");
+                    socketSender.sendRequest(sendMapRequest);
 
-                    receiveData = socketSender.catcher();
-                    printAnswer(receiveData, scan);
+                    receivedMap = socketSender.catchRespond();
+                    printAllUsers(receivedMap, scan);
                     System.out.println("=======================================");
                     break;
 
                 case CREATE:
+
                     System.out.println("Create new user");
                     EntityUser user = userService.createUser(0);
 
-                    sendData.put(scan, user);
-                    socketSender.sender(sendData);
+                    sendMapRequest.put(scan, user);
+                    socketSender.sendRequest(sendMapRequest);
 
-                    receiveData = socketSender.catcher();
-                    System.out.println(receiveData);
+                    receivedMap = socketSender.catchRespond();
+                    System.out.println(receivedMap);
                     break;
 
                 case DELETE:
                     System.out.println("Please enter ID of User u want to delete");
 
-                    String deleteID;
+                    int deleteID = tryToParse(scanner);
 
-                    do {
-                        deleteID = scanner.nextLine();
-                    } while (!checkInt(deleteID));
+                    sendMapRequest.put(scan, deleteID);
+                    socketSender.sendRequest(sendMapRequest);
 
-                    sendData.put(scan, tryToParse(deleteID));
-                    socketSender.sender(sendData);
+                    receivedMap = socketSender.catchRespond();
 
-                    receiveData = socketSender.catcher();
-
-                    if ((boolean) receiveData.get(scan)) {
+                    if ((boolean) receivedMap.get(scan)) {
                         System.out.printf("User with ID --> %s deleted\n", deleteID);
                     } else {
                         System.out.printf("No such user with ID->%s\n", deleteID);
@@ -103,42 +93,45 @@ public class CommandService {
 
                     System.out.println("============= Delete users =============");
 
-                    sendData.put(scan, "all");
-                    socketSender.sender(sendData);
+                    sendMapRequest.put(scan, "all");
+                    socketSender.sendRequest(sendMapRequest);
 
-                    receiveData = socketSender.catcher();
-                    printDeletedUsers(receiveData, scan);
+                    receivedMap = socketSender.catchRespond();
+                    printDeletedUsers(receivedMap, scan);
                     System.out.println("\n========================================");
 
                     break;
 
                 case UPDATE:
-                    String updateID;
+                    int updateID = tryToParse(scanner);
                     System.out.println("Please enter ID of user u want to update");
 
-                    do {
-                        updateID = scanner.nextLine();
-                    }while(!checkInt(updateID));
 
-                    EntityUser updateUser = userService.createUser(tryToParse(updateID));
+                    EntityUser updateUser = userService.createUser(updateID);
 
-                    sendData.put(scan, updateUser);
-                    socketSender.sender(sendData);
+                    sendMapRequest.put(scan, updateUser);
+                    socketSender.sendRequest(sendMapRequest);
 
-                    receiveData = socketSender.catcher();
+                    receivedMap = socketSender.catchRespond();
 
-                    System.out.println(receiveData.get(scan));
+                    System.out.println(receivedMap.get(scan));
+                    break;
+                case EXIT:
+                    EXIT_FLAG = false;
                     break;
             }
             socketSender.stopAllProcess();
-        } else {
+        } catch (IllegalArgumentException e) {
             System.out.println("Wrong command, pls use help");
+        } catch (RuntimeException e) {
+            System.out.println("Error, connection to server is failed");
         }
     }
+
     @SuppressWarnings("unchecked")
-    private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd){
+    private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<Integer> us = (ArrayList<Integer>) receiveData.get(cmd);
-        if (us != null) {
+        if (!us.isEmpty()) {
 
             for (Integer user : us) {
                 System.out.printf("User with ID --> %d deleted\n", user);
@@ -153,36 +146,36 @@ public class CommandService {
     }
 
     @SuppressWarnings("unchecked")
-    private void printAnswer(HashMap<String, Object> receiveData, String cmd) {
+    private void printAllUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<EntityUser> us = (ArrayList<EntityUser>) receiveData.get(cmd);
         if (!us.isEmpty()) {
-
             for (EntityUser user : us) {
                 System.out.println(user.toString());
             }
-
         } else {
-            System.out.println("Received data has no Users");
+            System.out.println("\t  Received data has no Users");
         }
-
     }
 
-    public int tryToParse(String param) {
+    private int tryToParse(Scanner scanner) {
         int in = -1;
-        try {
-            in = Integer.parseInt(param);
-        } catch (Exception e) {
-            return in;
-        }
+
+        do {
+            try {
+                in = Integer.parseInt(scanner.nextLine());
+                if (in <= 0) {
+                    System.out.println("ID cant be 0 or less");
+                    throw new RuntimeException();
+                }
+            } catch (Exception e) {
+                System.out.println("ID must be integer");
+            }
+        } while (in <= 0);
+
         return in;
     }
 
-    private boolean checkInt(String param) {
-        if (tryToParse(param) == -1) {
-            System.out.println("Wrong ID, ID must be integer and not negative");
-            return false;
-        } else {
-            return true;
-        }
+    public boolean isEXIT_FLAG() {
+        return EXIT_FLAG;
     }
 }

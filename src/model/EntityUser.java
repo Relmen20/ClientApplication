@@ -24,7 +24,7 @@ public class EntityUser implements Serializable {
         return name;
     }
 
-    public int getAge() {
+    public byte getAge() {
         return age;
     }
 

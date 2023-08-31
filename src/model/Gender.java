@@ -4,7 +4,7 @@ public enum Gender {
     MALE("male"),
     FEMALE("female");
 
-    private String longGender;
+    private final String longGender;
 
     Gender(String longGender) {
         this.longGender = longGender;

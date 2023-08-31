@@ -1,8 +1,9 @@
 package controller;
 
-import model.SerializedEntity;
+import model.SerializedWrapper;
 
-import java.io.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -15,56 +16,44 @@ public class SocketSender {
 
     public SocketSender() {
         try {
-
             clientSocket = new Socket(InetAddress.getByName(localhost), serverPort);
 
         } catch (Exception e) {
-            System.out.println("Error, connection to server is failed");
-
+            throw new RuntimeException();
         }
     }
 
-    public void sender(HashMap<String, Object> sendMsg) {
+    public void sendRequest(HashMap<String, Object> sendMap) {
 
         try {
-            OutputStream south = clientSocket.getOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            SerializedWrapper serializedMap = new SerializedWrapper(sendMap);
+            objectOutputStream.writeObject(serializedMap);
 
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(south);
-
-            SerializedEntity data = new SerializedEntity(sendMsg);
-            objectOutputStream.writeObject(data);
         } catch (Exception e) {
             System.out.println("sender Exception : " + e);
         }
     }
 
-    public HashMap<String, Object> catcher() {
+    public HashMap<String, Object> catchRespond() {
 
-        HashMap<String, Object> receivedData = new HashMap<>();
+        HashMap<String, Object> respondMap = new HashMap<>();
+        SerializedWrapper serializedWrapper;
 
-        SerializedEntity ser;
-        try {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream())) {
+            serializedWrapper = (SerializedWrapper) objectInputStream.readObject();
+            respondMap = serializedWrapper.getMapWrapper();
 
-            InputStream sin = clientSocket.getInputStream();
-
-            ObjectInputStream objectInputStream = new ObjectInputStream(sin);
-
-            ser = (SerializedEntity) objectInputStream.readObject();
-
-            receivedData = ser.sendMsg;
-
-            objectInputStream.close();
         } catch (Exception e) {
             System.out.println("catcher Exception : " + e);
         }
-        return receivedData;
+        return respondMap;
     }
 
-
     public void stopAllProcess() {
-        try{
+        try {
             clientSocket.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Socket error");
         }
     }

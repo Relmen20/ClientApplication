@@ -34,13 +34,13 @@ public class UserService {
         return new EntityUser(name, tryToByte(age), ID, gender);
     }
 
-    private byte tryToByte(String age){
+    private byte tryToByte(String age) {
         byte intAge = -1;
 
-        try{
+        try {
             intAge = Byte.parseByte(age);
-        }catch(Exception e){
-//            System.out.println(e);
+        } catch (Exception e) {
+            System.out.println(e);
         }
 
         return intAge;
@@ -69,27 +69,28 @@ public class UserService {
         }
     }
 
-//    public EntityUser updateUser(Object o) {
-//        EntityUser oldUser = (EntityUser) o;
-//
-//        System.out.printf("U are going to change '%s' data\n" +
-//                          "==================================================\n" +
-//                          "Enter new name of user, current name '%s' -> ", oldUser.getName(), oldUser.getName());
-//        String name = scanner.nextLine();
-//
-//        System.out.printf("Enter new gender of user, current gender '%s' -> ", oldUser.getGender());
-//        Gender gender;
-//        do {
-//            String inputGender = scanner.nextLine();
-//            gender = checkGender(inputGender);
-//        } while (gender == null);
-//
-//        String age;
-//        System.out.printf("Enter new age of user, current age '%s' -> ", oldUser.getAge());
-//        do {
-//            age = scanner.nextLine();
-//        } while (checkAge(age) == 0);
-//
-//        return new EntityUser(name, tryToByte(age), oldUser.getID(), gender);
-//    }
+    public EntityUser updateUser(Object o) {
+
+        EntityUser oldUser = (EntityUser) o;
+
+        System.out.printf("U are going to change '%s' data\n" +
+                          "==================================================\n" +
+                          "Enter new name of user, current name '%s' -> ", oldUser.getName(), oldUser.getName());
+        String name = scanner.nextLine();
+
+        System.out.printf("Enter new gender of user, current gender '%s' -> ", oldUser.getGender());
+        Gender gender;
+        do {
+            String inputGender = scanner.nextLine();
+            gender = checkGender(inputGender);
+        } while (gender == null);
+
+        String age;
+        System.out.printf("Enter new age of user, current age '%s' -> ", oldUser.getAge());
+        do {
+            age = scanner.nextLine();
+        } while (checkAge(age) == 0);
+
+        return new EntityUser(name, tryToByte(age), oldUser.getID(), gender);
+    }
 }

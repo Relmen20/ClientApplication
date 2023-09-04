@@ -6,6 +6,8 @@ import model.EntityUser;
 
 import java.util.*;
 
+import static java.lang.Integer.compare;
+
 public class CommandService {
     private boolean EXIT_FLAG = true;
     private final Scanner scanner;
@@ -26,10 +28,14 @@ public class CommandService {
 
         System.out.println("Enter the message");
 
-        String scan = scanner.nextLine().toUpperCase(Locale.ROOT);
+        String scannerCommand = scanner.nextLine().toUpperCase(Locale.ROOT);
 
         try {
-            CommandList commandList = CommandList.valueOf(scan);
+            CommandList commandList = CommandList.valueOf(scannerCommand);
+            if(commandList == CommandList.EXIT){
+                EXIT_FLAG = false;
+                return;
+            }
             socketSender = new SocketSender();
             switch (commandList) {
 
@@ -42,21 +48,21 @@ public class CommandService {
 
                     int readParam = tryToParse(scanner);
 
-                    sendMapRequest.put(scan, readParam);
+                    sendMapRequest.put(scannerCommand, readParam);
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
-                    System.out.println(receivedMap.get(scan).toString());
+                    System.out.println(receivedMap.get(scannerCommand).toString());
                     break;
 
                 case READ_ALL:
                     System.out.println("============== All users ==============");
 
-                    sendMapRequest.put(scan, "all");
+                    sendMapRequest.put(scannerCommand, "all");
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
-                    printAllUsers(receivedMap, scan);
+                    printAllUsers(receivedMap, scannerCommand);
                     System.out.println("=======================================");
                     break;
 
@@ -65,7 +71,7 @@ public class CommandService {
                     System.out.println("Create new user");
                     EntityUser user = userService.createUser(0);
 
-                    sendMapRequest.put(scan, user);
+                    sendMapRequest.put(scannerCommand, user);
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
@@ -77,12 +83,12 @@ public class CommandService {
 
                     int deleteID = tryToParse(scanner);
 
-                    sendMapRequest.put(scan, deleteID);
+                    sendMapRequest.put(scannerCommand, deleteID);
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
 
-                    if ((boolean) receivedMap.get(scan)) {
+                    if ((boolean) receivedMap.get(scannerCommand)) {
                         System.out.printf("User with ID --> %s deleted\n", deleteID);
                     } else {
                         System.out.printf("No such user with ID->%s\n", deleteID);
@@ -93,11 +99,11 @@ public class CommandService {
 
                     System.out.println("============= Delete users =============");
 
-                    sendMapRequest.put(scan, "all");
+                    sendMapRequest.put(scannerCommand, "all");
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
-                    printDeletedUsers(receivedMap, scan);
+                    printDeletedUsers(receivedMap, scannerCommand);
                     System.out.println("\n========================================");
 
                     break;
@@ -109,15 +115,12 @@ public class CommandService {
 
                     EntityUser updateUser = userService.createUser(updateID);
 
-                    sendMapRequest.put(scan, updateUser);
+                    sendMapRequest.put(scannerCommand, updateUser);
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
 
-                    System.out.println(receivedMap.get(scan));
-                    break;
-                case EXIT:
-                    EXIT_FLAG = false;
+                    System.out.println(receivedMap.get(scannerCommand));
                     break;
             }
             socketSender.stopAllProcess();
@@ -130,14 +133,15 @@ public class CommandService {
 
     @SuppressWarnings("unchecked")
     private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd) {
-        ArrayList<Integer> us = (ArrayList<Integer>) receiveData.get(cmd);
-        if (!us.isEmpty()) {
+        ArrayList<Integer> arrayOfID = (ArrayList<Integer>) receiveData.get(cmd);
+        arrayOfID.sort();
+        if (!arrayOfID.isEmpty()) {
 
-            for (Integer user : us) {
+            for (Integer user : arrayOfID) {
                 System.out.printf("User with ID --> %d deleted\n", user);
             }
 
-            System.out.printf("Total count of users deleted: %s", us.size());
+            System.out.printf("Total count of users deleted: %s", arrayOfID.size());
 
         } else {
             System.out.print("\t   Received data has no Users");
@@ -148,6 +152,7 @@ public class CommandService {
     @SuppressWarnings("unchecked")
     private void printAllUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<EntityUser> us = (ArrayList<EntityUser>) receiveData.get(cmd);
+
         if (!us.isEmpty()) {
             for (EntityUser user : us) {
                 System.out.println(user.toString());
@@ -164,11 +169,12 @@ public class CommandService {
             try {
                 in = Integer.parseInt(scanner.nextLine());
                 if (in <= 0) {
-                    System.out.println("ID cant be 0 or less");
                     throw new RuntimeException();
                 }
-            } catch (Exception e) {
+            }catch (NumberFormatException e){
                 System.out.println("ID must be integer");
+            }catch (RuntimeException e) {
+                System.out.println("ID cant be 0 or less");
             }
         } while (in <= 0);
 

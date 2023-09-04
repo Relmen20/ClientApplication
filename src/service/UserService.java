@@ -25,34 +25,30 @@ public class UserService {
             gender = checkGender(inputGender);
         } while (gender == null);
 
-        String age;
         System.out.print("Please enter your age: ");
+        byte age = tryToByte(scanner);
+
+
+        return new EntityUser(name, age, ID, gender);
+    }
+
+    private byte tryToByte(Scanner scanner) {
+        byte age = -1;
         do {
-            age = scanner.nextLine();
-        } while (checkAge(age) == 0);
+            try {
+                age = Byte.parseByte(scanner.nextLine());
+                if (age > 0 && age <= 100) {
+                    return age;
+                }
+                else{
+                    throw new RuntimeException();
+                }
+            } catch (Exception e) {
+                System.out.print("Please set your age between 1 and 100 --> ");
+            }
+        } while (age == -1);
 
-        return new EntityUser(name, tryToByte(age), ID, gender);
-    }
-
-    private byte tryToByte(String age) {
-        byte intAge = -1;
-
-        try {
-            intAge = Byte.parseByte(age);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return intAge;
-    }
-
-    private byte checkAge(String str) {
-        byte age = tryToByte(str);
-        if (age > 0 && age <= 100) return age;
-        else {
-            System.out.print("Please set your age between 1 and 100 --> ");
-            return 0;
-        }
+        return age;
     }
 
     private Gender checkGender(String inputGender) {
@@ -85,12 +81,9 @@ public class UserService {
             gender = checkGender(inputGender);
         } while (gender == null);
 
-        String age;
+        byte age = tryToByte(scanner);
         System.out.printf("Enter new age of user, current age '%s' -> ", oldUser.getAge());
-        do {
-            age = scanner.nextLine();
-        } while (checkAge(age) == 0);
 
-        return new EntityUser(name, tryToByte(age), oldUser.getID(), gender);
+        return new EntityUser(name, age, oldUser.getID(), gender);
     }
 }

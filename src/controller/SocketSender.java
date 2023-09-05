@@ -1,7 +1,5 @@
 package controller;
 
-import model.SerializedWrapper;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -17,19 +15,17 @@ public class SocketSender {
     public SocketSender() {
         try {
             clientSocket = new Socket(InetAddress.getByName(localhost), serverPort);
-
         } catch (Exception e) {
+            System.out.println("Exception " + e);
             throw new RuntimeException();
         }
     }
 
     public void sendRequest(HashMap<String, Object> sendMap) {
 
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-            SerializedWrapper serializedMap = new SerializedWrapper(sendMap);
-            objectOutputStream.writeObject(serializedMap);
-
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream())) {
+            objectOutputStream.writeObject(sendMap);
+            objectOutputStream.flush();
         } catch (Exception e) {
             System.out.println("sender Exception : " + e);
         }
@@ -38,14 +34,12 @@ public class SocketSender {
     public HashMap<String, Object> catchRespond() {
 
         HashMap<String, Object> respondMap = new HashMap<>();
-        SerializedWrapper serializedWrapper;
 
         try (ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream())) {
-            serializedWrapper = (SerializedWrapper) objectInputStream.readObject();
-            respondMap = serializedWrapper.getMapWrapper();
-
+            respondMap = (HashMap<String, Object>) objectInputStream.readObject();
         } catch (Exception e) {
-            System.out.println("catcher Exception : " + e);
+//            System.out.println("catcher Exception : " + e);
+            e.printStackTrace();
         }
         return respondMap;
     }

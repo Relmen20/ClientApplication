@@ -1,8 +1,6 @@
 import service.CommandService;
 
-import java.util.EmptyStackException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 public class Main {
 

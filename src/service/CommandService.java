@@ -53,6 +53,17 @@ public class CommandService {
 
                     receivedMap = socketSender.catchRespond();
                     System.out.println(receivedMap.get(scannerCommand).toString());
+
+
+//                    System.out.println("Please enter an ID of user");
+//
+//                    readParam = tryToParse(scanner);
+//
+//                    sendMapRequest.put(scannerCommand, readParam);
+//                    socketSender.sendRequest(sendMapRequest);
+//
+//                    receivedMap = socketSender.catchRespond();
+//                    System.out.println(receivedMap.get(scannerCommand).toString());
                     break;
 
                 case READ_ALL:
@@ -134,7 +145,7 @@ public class CommandService {
     @SuppressWarnings("unchecked")
     private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<Integer> arrayOfID = (ArrayList<Integer>) receiveData.get(cmd);
-        arrayOfID.sort();
+        
         if (!arrayOfID.isEmpty()) {
 
             for (Integer user : arrayOfID) {
@@ -151,10 +162,10 @@ public class CommandService {
 
     @SuppressWarnings("unchecked")
     private void printAllUsers(HashMap<String, Object> receiveData, String cmd) {
-        ArrayList<EntityUser> us = (ArrayList<EntityUser>) receiveData.get(cmd);
+        ArrayList<EntityUser> userArrayList = (ArrayList<EntityUser>) receiveData.get(cmd);
 
-        if (!us.isEmpty()) {
-            for (EntityUser user : us) {
+        if (!userArrayList.isEmpty()) {
+            for (EntityUser user : userArrayList) {
                 System.out.println(user.toString());
             }
         } else {

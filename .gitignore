@@ -27,6 +27,6 @@ bin/
 ### VS Code ###
 .vscode/
 .idea/
-
+/src/StudyClasses/
 ### Mac OS ###
 .DS_Store

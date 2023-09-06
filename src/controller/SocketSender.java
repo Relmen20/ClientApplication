@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -23,7 +24,8 @@ public class SocketSender {
 
     public void sendRequest(HashMap<String, Object> sendMap) {
 
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream())) {
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             objectOutputStream.writeObject(sendMap);
             objectOutputStream.flush();
         } catch (Exception e) {
@@ -35,11 +37,13 @@ public class SocketSender {
 
         HashMap<String, Object> respondMap = new HashMap<>();
 
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(clientSocket.getInputStream())) {
+        try{
+            InputStream inputStream = clientSocket.getInputStream();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             respondMap = (HashMap<String, Object>) objectInputStream.readObject();
+
         } catch (Exception e) {
-//            System.out.println("catcher Exception : " + e);
-            e.printStackTrace();
+            System.out.println("catcher Exception : " + e);
         }
         return respondMap;
     }

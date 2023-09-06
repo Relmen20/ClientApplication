@@ -12,7 +12,6 @@ public class UserService {
         this.scanner = scanner;
     }
 
-
     public EntityUser createUser(int ID) {
         System.out.print("Please enter your name: ");
         String name = scanner.nextLine();
@@ -70,7 +69,7 @@ public class UserService {
         EntityUser oldUser = (EntityUser) o;
 
         System.out.printf("U are going to change '%s' data\n" +
-                          "==================================================\n" +
+                          "=======================================================\n" +
                           "Enter new name of user, current name '%s' -> ", oldUser.getName(), oldUser.getName());
         String name = scanner.nextLine();
 
@@ -81,8 +80,8 @@ public class UserService {
             gender = checkGender(inputGender);
         } while (gender == null);
 
-        byte age = tryToByte(scanner);
         System.out.printf("Enter new age of user, current age '%s' -> ", oldUser.getAge());
+        byte age = tryToByte(scanner);
 
         return new EntityUser(name, age, oldUser.getID(), gender);
     }

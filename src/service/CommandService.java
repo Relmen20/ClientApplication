@@ -6,7 +6,6 @@ import model.EntityUser;
 
 import java.util.*;
 
-import static java.lang.Integer.compare;
 
 public class CommandService {
     private boolean EXIT_FLAG = true;
@@ -19,24 +18,18 @@ public class CommandService {
     }
 
     public void process() {
-
         HashMap<String, Object> sendMapRequest = new HashMap<>();
-
         HashMap<String, Object> receivedMap;
 
-        SocketSender socketSender;
-
         System.out.println("Enter the message");
-
         String scannerCommand = scanner.nextLine().toUpperCase(Locale.ROOT);
-
         try {
             CommandList commandList = CommandList.valueOf(scannerCommand);
             if(commandList == CommandList.EXIT){
                 EXIT_FLAG = false;
                 return;
             }
-            socketSender = new SocketSender();
+            SocketSender socketSender = new SocketSender();
             switch (commandList) {
 
                 case HELP:
@@ -45,25 +38,11 @@ public class CommandService {
 
                 case READ:
                     System.out.println("Please enter an ID of user");
-
-                    int readParam = tryToParse(scanner);
-
-                    sendMapRequest.put(scannerCommand, readParam);
+                    sendMapRequest.put(scannerCommand, tryToParse(scanner));
                     socketSender.sendRequest(sendMapRequest);
 
                     receivedMap = socketSender.catchRespond();
                     System.out.println(receivedMap.get(scannerCommand).toString());
-
-
-//                    System.out.println("Please enter an ID of user");
-//
-//                    readParam = tryToParse(scanner);
-//
-//                    sendMapRequest.put(scannerCommand, readParam);
-//                    socketSender.sendRequest(sendMapRequest);
-//
-//                    receivedMap = socketSender.catchRespond();
-//                    System.out.println(receivedMap.get(scannerCommand).toString());
                     break;
 
                 case READ_ALL:
@@ -78,7 +57,6 @@ public class CommandService {
                     break;
 
                 case CREATE:
-
                     System.out.println("Create new user");
                     EntityUser user = userService.createUser(0);
 
@@ -91,12 +69,10 @@ public class CommandService {
 
                 case DELETE:
                     System.out.println("Please enter ID of User u want to delete");
-
                     int deleteID = tryToParse(scanner);
 
                     sendMapRequest.put(scannerCommand, deleteID);
                     socketSender.sendRequest(sendMapRequest);
-
                     receivedMap = socketSender.catchRespond();
 
                     if ((boolean) receivedMap.get(scannerCommand)) {
@@ -107,7 +83,6 @@ public class CommandService {
                     break;
 
                 case DELETE_ALL:
-
                     System.out.println("============= Delete users =============");
 
                     sendMapRequest.put(scannerCommand, "all");
@@ -116,21 +91,19 @@ public class CommandService {
                     receivedMap = socketSender.catchRespond();
                     printDeletedUsers(receivedMap, scannerCommand);
                     System.out.println("\n========================================");
-
                     break;
 
                 case UPDATE:
-                    int updateID = tryToParse(scanner);
                     System.out.println("Please enter ID of user u want to update");
-
-
-                    EntityUser updateUser = userService.createUser(updateID);
-
-                    sendMapRequest.put(scannerCommand, updateUser);
+                    sendMapRequest.put(CommandList.READ.name(), tryToParse(scanner));
                     socketSender.sendRequest(sendMapRequest);
-
                     receivedMap = socketSender.catchRespond();
 
+                    EntityUser updateUser = userService.updateUser(receivedMap.get(CommandList.READ.name()));
+                    sendMapRequest.clear();
+                    sendMapRequest.put(scannerCommand, updateUser);
+                    socketSender.sendRequest(sendMapRequest);
+                    receivedMap = socketSender.catchRespond();
                     System.out.println(receivedMap.get(scannerCommand));
                     break;
             }
@@ -145,25 +118,19 @@ public class CommandService {
     @SuppressWarnings("unchecked")
     private void printDeletedUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<Integer> arrayOfID = (ArrayList<Integer>) receiveData.get(cmd);
-        
         if (!arrayOfID.isEmpty()) {
-
             for (Integer user : arrayOfID) {
-                System.out.printf("User with ID --> %d deleted\n", user);
+                System.out.printf("\t  User with ID = %d --> deleted\n", user);
             }
-
-            System.out.printf("Total count of users deleted: %s", arrayOfID.size());
-
+            System.out.printf("   Total count of users deleted --> %s", arrayOfID.size());
         } else {
             System.out.print("\t   Received data has no Users");
         }
-
     }
 
     @SuppressWarnings("unchecked")
     private void printAllUsers(HashMap<String, Object> receiveData, String cmd) {
         ArrayList<EntityUser> userArrayList = (ArrayList<EntityUser>) receiveData.get(cmd);
-
         if (!userArrayList.isEmpty()) {
             for (EntityUser user : userArrayList) {
                 System.out.println(user.toString());
@@ -174,12 +141,11 @@ public class CommandService {
     }
 
     private int tryToParse(Scanner scanner) {
-        int in = -1;
-
+        int inputID = -1;
         do {
             try {
-                in = Integer.parseInt(scanner.nextLine());
-                if (in <= 0) {
+                inputID = Integer.parseInt(scanner.nextLine());
+                if (inputID <= 0) {
                     throw new RuntimeException();
                 }
             }catch (NumberFormatException e){
@@ -187,9 +153,8 @@ public class CommandService {
             }catch (RuntimeException e) {
                 System.out.println("ID cant be 0 or less");
             }
-        } while (in <= 0);
-
-        return in;
+        } while (inputID <= 0);
+        return inputID;
     }
 
     public boolean isEXIT_FLAG() {

@@ -17,7 +17,7 @@ public class CommandService {
         this.userService = new UserService(scanner);
     }
 
-    public void process() {
+    public void process(int port) {
         HashMap<String, Object> sendMapRequest = new HashMap<>();
         HashMap<String, Object> receivedMap;
 
@@ -29,7 +29,7 @@ public class CommandService {
                 EXIT_FLAG = false;
                 return;
             }
-            SocketSender socketSender = new SocketSender();
+            SocketSender socketSender = new SocketSender(port);
             switch (commandList) {
 
                 case HELP:

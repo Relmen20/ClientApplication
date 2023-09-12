@@ -8,7 +8,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         CommandService commandService = new CommandService(scanner);
         while (commandService.isEXIT_FLAG()) {
-            commandService.process();
+            commandService.process(Integer.parseInt(args[0]));
         }
     }
 }

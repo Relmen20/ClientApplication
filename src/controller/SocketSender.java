@@ -9,11 +9,9 @@ import java.util.HashMap;
 
 public class SocketSender {
     Socket clientSocket;
-
-    private static final int serverPort = 6666;
     private static final String localhost = "127.0.0.1";
 
-    public SocketSender() {
+    public SocketSender(int serverPort) {
         try {
             clientSocket = new Socket(InetAddress.getByName(localhost), serverPort);
         } catch (Exception e) {
